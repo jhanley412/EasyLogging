@@ -22,7 +22,9 @@ def sendMail(frm,to,subject,message, attachment = None):
               "messageBody":message,
               "mimeattach":attachment
               }
+    #print(parse.urlencode(myData))
     mailUrl = 'http://info.arrowheadcu.org/callout/sendmail/sendmail.cfm?'
+    #print(mailUrl + parse.urlencode(myData))
     request.urlopen(mailUrl + parse.urlencode(myData));
     return True
 
@@ -46,7 +48,15 @@ def setupLogging(
     
     # Look to see if __logs directory exists fo log outputs. If DNE create directory and uses path as working directory
     if not os.path.exists(logoutput_path):
-        os.mkdir(logoutput_path)
+        try:
+            os.mkdir(logoutput_path)
+        except FileNotFoundError as e:
+            print('Verify that your logoutput_path is a valid directory. logoutput_path: {0}'.format(logoutput_path))
+            raise
+            ''' This will allow any process to run if provided logoutput path is invalid. Comment in if this needs to be done
+            logoutput_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '__logs')
+            if not os.path.exists(logoutput_path):
+                os.mkdir(logoutput_path)'''  
     os.chdir(logoutput_path)
     
 
@@ -86,6 +96,7 @@ if __name__ == '__main__':
     Change Log
 
         07/28/2015 - Initial file created by Justin Hanley
-        08/27/2015 - Adding email function for email trigger notifications 
+        08/27/2015 - Adding email function for email trigger notifications
+        03/29/2016 - Add error handling for invalid logoutput_path
 
 *****************************************************************************'''
